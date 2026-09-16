@@ -18,6 +18,8 @@ resource "proxmox_virtual_environment_vm" "vm" {
   }
 
   initialization {
+    user_data_file_id = proxmox_virtual_environment_file.cloud_init_user_data.id
+
     ip_config {
       ipv4 {
         address = var.ip_address
@@ -31,4 +33,33 @@ resource "proxmox_virtual_environment_vm" "vm" {
   }
 
   agent { enabled = true }
+}
+
+resource "proxmox_virtual_environment_file" "cloud_init_user_data" {
+  content_type = "snippets"
+  datastore_id = "local" # Must be a storage that has 'snippets' enabled in PVE
+  node_name    = "pve"
+
+  source_raw {
+    data = <<-EOF
+      #cloud-config
+      package_update: true
+      package_upgrade: false
+      packages:
+        - python3
+        - python3-pip
+        - python3-venv
+      users:
+        - default
+        - name: ${var.username}
+          gecos: ${var.username}
+          groups: sudo
+          shell: /bin/bash
+          sudo: ALL=(ALL) NOPASSWD:ALL
+          ssh_authorized_keys:
+            - ${var.ssh_key}
+    EOF
+
+    file_name = "user-data-${var.name}.yaml"
+  }
 }
