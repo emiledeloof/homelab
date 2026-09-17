@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  plan:
+  tofu:
     runs-on: self-hosted
 
     steps:
