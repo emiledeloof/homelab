@@ -31,7 +31,8 @@ variable "gateway" {
 }
 
 variable "ssh_key" {
-  type = string
+  type      = string
+  sensitive = true
 }
 
 variable "username" {

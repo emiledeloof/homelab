@@ -9,3 +9,4 @@ override.tf.json
 *_override.tf.json
 .tofu/
 .terraform/
+.ssh
