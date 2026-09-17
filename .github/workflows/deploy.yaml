@@ -1,0 +1,18 @@
+name: Deploy via Local Ansible
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout latest repo files
+        uses: actions/checkout@v4
+
+      - name: Run Playbook
+        run: |
+          ansible-playbook -i ~/homelab/ansible/inventory.yaml ~/homelab/ansible/playbook.yml
