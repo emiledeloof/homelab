@@ -15,4 +15,4 @@ jobs:
 
       - name: Run Playbook
         run: |
-          /home/homelab/.local/bin/ansible-playbook -i ~/homelab/ansible/inventory.yaml ~/homelab/ansible/playbook.yml
+          /home/homelab/.local/bin/ansible-playbook -i ~/homelab/ansible/inventory.yaml ~/homelab/ansible/playbook.yaml
