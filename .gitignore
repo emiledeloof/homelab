@@ -10,3 +10,4 @@ override.tf.json
 .tofu/
 .terraform/
 .ssh
+r2secrets

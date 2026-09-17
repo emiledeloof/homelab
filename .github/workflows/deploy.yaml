@@ -8,34 +8,41 @@ on:
 jobs:
   tofu:
     runs-on: self-hosted
+    env:
+      # Injected via GitHub Repository Secrets for Cloudflare R2
+      AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
 
     steps:
-      - name: Tofu init
+      - name: Sync latest repository code
+        run: |
+          cd ~/homelab
+          git pull origin-ssh main
+
+      - name: Tofu Init
         run: |
           cd ~/homelab/terraform
           tofu init
 
-      - name: Tofu plan
+      - name: Tofu Plan
         run: |
           cd ~/homelab/terraform
-          tofu plan
+          tofu plan -no-color
 
-      - name: Tofu apply
+      - name: Tofu Apply
         run: |
           cd ~/homelab/terraform
-          tofu apply -auto-approve
+          tofu apply -auto-approve -no-color
 
   deploy:
     runs-on: self-hosted
     needs: tofu
 
     steps:
-      - name: Pull latest repo files
-        run: |
-          cd ~/homelab
-          git pull origin-ssh main
-
-      - name: Run Playbook
+      - name: Run Ansible Playbook
         run: |
           cd ~/homelab/ansible
-          /home/homelab/.local/bin/ansible-playbook -i inventory.yaml playbook.yaml
+          /home/homelab/.local/bin/ansible-playbook \
+            -i inventory.yaml \
+            playbook.yaml \
+            --vault-password-file ~/.vault_pass
