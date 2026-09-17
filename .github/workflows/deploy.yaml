@@ -6,6 +6,25 @@ on:
       - main
 
 jobs:
+  plan:
+    runs-on: self-hosted
+
+    steps:
+      - name: Tofu init
+        run: |
+          cd ~/homelab/terraform
+          tofu init
+
+      - name: Tofu plan
+        run: |
+          cd ~/homelab/terraform
+          tofu plan
+
+      - name: Tofu apply
+        run: |
+          cd ~/homelab/terraform
+          tofu apply
+
   deploy:
     runs-on: self-hosted
 
