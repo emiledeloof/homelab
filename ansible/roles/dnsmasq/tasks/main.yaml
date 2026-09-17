@@ -22,18 +22,6 @@
     validate: 'dnsmasq --test --conf-file=%s'
   notify: Restart dnsmasq
 
-- name: Open DNS ports in firewalld
-  ansible.posix.firewalld:
-    port: "{{ dnsmasq_port }}/{{ item }}"
-    permanent: true
-    state: enabled
-    immediate: true
-  loop:
-    - udp
-    - tcp
-  when: ansible_os_family == "RedHat"
-  failed_when: false
-
 - name: Open DNS ports in UFW
   community.general.ufw:
     rule: allow

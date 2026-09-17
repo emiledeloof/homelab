@@ -1,5 +1,15 @@
-- name: My first play
+- name: Deploy DNS server
   hosts: dns
   become: true
   roles:
     - dnsmasq
+
+- name: Deploy Tailscale
+  hosts: tailscale
+  become: true
+  roles:
+    - role: artis3n.tailscale.machine
+      vars:
+        # Pass via Ansible Vault or environment variable in production
+        tailscale_authkey: "{{ lookup('ansible.builtin.env', 'tailscale_auth_key') }}"
+        tailscale_args: "--ssh"

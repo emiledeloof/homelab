@@ -2,3 +2,8 @@ dns:
   hosts:
     dns: 
       ansible_host: "192.168.1.101"
+
+tailscale:
+  hosts:
+    tailscale:
+      ansible_host: "192.168.1.103"
