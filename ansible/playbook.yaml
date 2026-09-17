@@ -12,3 +12,6 @@
       vars:
         # Pass via Ansible Vault or environment variable in production
         tailscale_authkey: "{{ tailscale_auth_key }}"
+        tailscale_ssh: false
+        # Ensure --ssh is removed from extra arguments
+        tailscale_args: ""
