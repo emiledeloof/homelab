@@ -16,5 +16,5 @@ dnsmasq_expand_hosts: true
 dnsmasq_records:
   - { name: "homelab.local", ip: "192.168.1.103" }
 
-# dnsmasq_cnames:
-  # - { alias: "files.internal.lab", target: "nas.internal.lab" }
+dnsmasq_cnames:
+  - { alias: "web.homelab.local", target: "homelab.local" }
