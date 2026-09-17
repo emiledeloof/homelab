@@ -27,6 +27,7 @@ jobs:
 
   deploy:
     runs-on: self-hosted
+    needs: tofu
 
     steps:
       - name: Pull latest repo files
