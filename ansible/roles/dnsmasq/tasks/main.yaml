@@ -1,0 +1,52 @@
+- name: Install dnsmasq
+  ansible.builtin.package:
+    name: dnsmasq
+    state: present
+
+# Disable systemd-resolved DNS stub listener if running to free port 53
+- name: Check if systemd-resolved stub listener is enabled
+  ansible.builtin.lineinfile:
+    path: /etc/systemd/resolved.conf
+    regexp: '^#?DNSStubListener='
+    line: 'DNSStubListener=no'
+  notify: Restart systemd-resolved
+  failed_when: false
+
+- name: Deploy dnsmasq configuration
+  ansible.builtin.template:
+    src: dnsmasq.conf.j2
+    dest: /etc/dnsmasq.conf
+    owner: root
+    group: root
+    mode: '0644'
+    validate: 'dnsmasq --test --conf-file=%s'
+  notify: Restart dnsmasq
+
+- name: Open DNS ports in firewalld
+  ansible.posix.firewalld:
+    port: "{{ dnsmasq_port }}/{{ item }}"
+    permanent: true
+    state: enabled
+    immediate: true
+  loop:
+    - udp
+    - tcp
+  when: ansible_os_family == "RedHat"
+  failed_when: false
+
+- name: Open DNS ports in UFW
+  community.general.ufw:
+    rule: allow
+    port: "{{ dnsmasq_port }}"
+    proto: "{{ item }}"
+  loop:
+    - udp
+    - tcp
+  when: ansible_os_family == "Debian"
+  failed_when: false
+
+- name: Ensure dnsmasq is enabled and started
+  ansible.builtin.systemd:
+    name: dnsmasq
+    enabled: true
+    state: started

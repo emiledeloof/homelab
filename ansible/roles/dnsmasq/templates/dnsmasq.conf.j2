@@ -1,0 +1,36 @@
+# Never forward plain names (without a dot or domain part)
+domain-needed
+# Never forward addresses in the non-routed address spaces
+bogus-priv
+
+port={{ dnsmasq_port }}
+
+# Interfaces and IP addresses to listen on
+{% for ip in dnsmasq_listen_addresses %}
+listen-address={{ ip }}
+{% endfor %}
+
+# Upstream DNS servers
+no-resolv
+{% for server in dnsmasq_upstream_servers %}
+server={{ server }}
+{% endfor %}
+
+# Local domain handling
+domain={{ dnsmasq_domain }}
+{% if dnsmasq_expand_hosts %}
+expand-hosts
+{% endif %}
+
+# Custom address mappings
+{% for record in dnsmasq_records %}
+address=/{{ record.name }}/{{ record.ip }}
+{% endfor %}
+
+# CNAME mappings
+{% for cname in dnsmasq_cnames %}
+cname={{ cname.alias }},{{ cname.target }}
+{% endfor %}
+
+# Local cache size
+cache-size=1000

@@ -1,4 +1,4 @@
-homelab:
+dns:
   hosts:
     dns: 
       ansible_host: "192.168.1.101"
