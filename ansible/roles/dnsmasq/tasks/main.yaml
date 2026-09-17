@@ -45,6 +45,12 @@
   when: ansible_os_family == "Debian"
   failed_when: false
 
+- name: Ensure systemd-resolve is disabled and not running
+  ansible.builtin.systemd:
+    name: systemd-resolved
+    enabled: false
+    state: stopped
+
 - name: Ensure dnsmasq is enabled and started
   ansible.builtin.systemd:
     name: dnsmasq
