@@ -10,8 +10,10 @@ jobs:
     runs-on: self-hosted
 
     steps:
-      - name: Checkout latest repo files
-        uses: actions/checkout@v4
+      - name: Pull latest repo files
+        run: |
+          cd ~/homelab
+          git pull origin-ssh main
 
       - name: Run Playbook
         run: |
