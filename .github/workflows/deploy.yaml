@@ -23,7 +23,7 @@ jobs:
       - name: Tofu apply
         run: |
           cd ~/homelab/terraform
-          tofu apply -f
+          tofu apply -auto-approve
 
   deploy:
     runs-on: self-hosted
