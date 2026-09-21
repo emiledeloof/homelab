@@ -8,6 +8,7 @@ on:
 jobs:
   tofu:
     runs-on: self-hosted
+    environment: R2
     env:
       # Injected via GitHub Repository Secrets for Cloudflare R2
       AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
