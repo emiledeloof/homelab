@@ -22,7 +22,7 @@ jobs:
       - name: Tofu Init
         run: |
           cd ~/homelab/terraform
-          tofu init
+          tofu init -backend-config="access_key=R2_ACCESS_KEY_ID" -backend-config="secret_key=R2_SECRET_ACCESS_KEY"
 
       - name: Tofu Plan
         run: |
