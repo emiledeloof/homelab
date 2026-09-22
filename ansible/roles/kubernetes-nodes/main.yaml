@@ -1,0 +1,18 @@
+- name: Ensure /etc/rancher/k3s directory exists
+  ansible.builtin.file:
+    path: /etc/rancher/k3s
+    state: directory
+    mode: '0755'
+
+- name: Write K3s Agent Configuration
+  ansible.builtin.copy:
+    dest: /etc/rancher/k3s/config.yaml
+    mode: '0600'
+    content: |
+      server: "{{ k3s_server_url }}"
+      token: "{{ k3s_token }}"
+
+- name: Install and Start K3s Agent
+  ansible.builtin.shell:
+    cmd: curl -sfL https://get.k3s.io | K3S_URL={{ k3s_server_url }} K3S_TOKEN={{ k3s_token }} sh -
+    creates: /etc/systemd/system/k3s-agent.service

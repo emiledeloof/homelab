@@ -10,4 +10,5 @@ override.tf.json
 .tofu/
 .terraform/
 .ssh
-r2secrets
+*secrets
+vault.yaml

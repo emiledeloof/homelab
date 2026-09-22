@@ -7,3 +7,16 @@ tailscale:
   hosts:
     tailscale:
       ansible_host: "192.168.1.103"
+
+kubernetes:
+  children:
+    kube-ctl:
+      hosts:
+        ctl-1:
+          ansible_host: "192.168.1.102"
+    kube-hosts:
+      hosts:
+        node-1:
+          ansible_host: "192.168.1.104"
+        node-2:
+          ansible_host: "192.168.1.105"

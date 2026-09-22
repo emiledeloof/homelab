@@ -1,0 +1,27 @@
+- name: Ensure /etc/rancher/k3s directory exists
+  ansible.builtin.file:
+    path: /etc/rancher/k3s
+    state: directory
+    mode: '0755'
+
+- name: Write K3s Server Configuration
+  ansible.builtin.copy:
+    dest: /etc/rancher/k3s/config.yaml
+    mode: '0600'
+    content: |
+      token: "{{ k3s_token }}"
+      cluster-init: true
+      tls-san:
+        - "{{ ansible_host }}"
+        - "{{ inventory_hostname }}"
+
+- name: Install and Start K3s Server
+  ansible.builtin.shell:
+    cmd: curl -sfL https://get.k3s.io | sh -
+    creates: /usr/local/bin/k3s
+
+- name: Wait for K3s API to become responsive
+  ansible.builtin.wait_for:
+    port: 6443
+    delay: 5
+    timeout: 60

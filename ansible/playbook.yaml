@@ -1,3 +1,19 @@
+- name: Tasks to run before all else
+  hosts:
+    - dns
+    - tailscale
+    - kube-ctl
+    - kube-nodes
+  tasks:
+    - name: Wait for apt locks to clear and update cache
+      ansible.builtin.apt:
+        update_cache: yes
+        cache_valid_time: 3600
+      register: apt_status
+      until: apt_status is success
+      delay: 30
+      retries: 20
+
 - name: Deploy DNS server
   hosts: dns
   become: true
@@ -15,3 +31,15 @@
         tailscale_ssh: false
         # Ensure --ssh is removed from extra arguments
         tailscale_args: ""
+
+- name: Deploy Kubernetes Control plane
+  hosts: kube-ctl
+  become: true
+  roles: 
+    - kubernetes-ctl
+
+- name: Deploy Kubernetes nodes
+  hosts: kube-hosts
+  become: true
+  roles:
+    - kubernetes-nodes
