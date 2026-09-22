@@ -58,7 +58,7 @@ jobs:
     steps:
       - name: install tailscale role
         run: |
-          ansible-galaxy role install artis3n.tailscale.machine
+          ansible-galaxy role install artis3n.tailscale
 
       - name: Run Ansible Playbook
         run: |
