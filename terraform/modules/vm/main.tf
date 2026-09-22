@@ -43,6 +43,8 @@ resource "proxmox_virtual_environment_file" "cloud_init_user_data" {
   source_raw {
     data = <<-EOF
       #cloud-config
+      hostname: ${var.name}
+      fqdn: ${var.name}.homelab.local
       package_update: true
       package_upgrade: false
       packages:
