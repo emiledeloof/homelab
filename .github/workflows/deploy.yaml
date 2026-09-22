@@ -56,6 +56,10 @@ jobs:
     needs: tofu
 
     steps:
+      - name: install tailscale role
+        run: |
+          ansible-galaxy role install artis3n.tailscale.machine
+
       - name: Run Ansible Playbook
         run: |
           cd ~/homelab/ansible
