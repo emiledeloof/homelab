@@ -15,20 +15,6 @@ jobs:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_ACCESS_KEY }}
 
     steps:
-      - name: Debug Secret Availability
-        run: |
-          if [ -z "$AWS_ACCESS_KEY_ID" ]; then
-            echo "AWS_ACCESS_KEY_ID is EMPTY"
-          else
-            echo "AWS_ACCESS_KEY_ID is populated (length: ${#AWS_ACCESS_KEY_ID})"
-          fi
-
-          if [ -z "$AWS_SECRET_ACCESS_KEY" ]; then
-            echo "AWS_SECRET_ACCESS_KEY is EMPTY"
-          else
-            echo "AWS_SECRET_ACCESS_KEY is populated (length: ${#AWS_SECRET_ACCESS_KEY})"
-          fi
-
       - name: Sync latest repository code
         run: |
           cd ~/homelab
