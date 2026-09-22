@@ -59,7 +59,7 @@ jobs:
       - name: install tailscale role
         run: |
           cd ~/homelab/ansible
-          ansible-galaxy role install artis3n.tailscale
+          ansible-galaxy collection install artis3n.tailscale
 
       - name: Run Ansible Playbook
         run: |
