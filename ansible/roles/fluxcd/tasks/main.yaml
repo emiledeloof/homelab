@@ -1,0 +1,48 @@
+- name: Check if flux CLI is already installed
+  ansible.builtin.stat:
+    path: /usr/local/bin/flux
+  register: flux_binary
+
+- name: Download and install Flux CLI
+  ansible.builtin.shell:
+    cmd: curl -s https://fluxcd.io/install.sh | bash
+  when: not flux_binary.stat.exists
+
+- name: Ensure K3s kubeconfig exists
+  ansible.builtin.wait_for:
+    path: "{{ flux_kubeconfig }}"
+    state: present
+    timeout: 60
+
+- name: Wait for Kubernetes API to respond
+  ansible.builtin.wait_for:
+    port: 6443
+    delay: 5
+    timeout: 60
+
+- name: Bootstrap Flux CD with GitHub repository
+  ansible.builtin.command:
+    cmd: >
+      flux bootstrap github
+      --owner={{ flux_github_user }}
+      --repository={{ flux_github_repo }}
+      --branch={{ flux_target_branch }}
+      --path={{ flux_cluster_path }}
+      --personal
+  environment:
+    GITHUB_TOKEN: "{{ flux_github_token }}"
+    KUBECONFIG: "{{ flux_kubeconfig }}"
+  register: flux_bootstrap_result
+  changed_when: "'all components are up to date' not in flux_bootstrap_result.stdout"
+  no_log: true
+
+- name: Wait for Flux system pods to be ready
+  ansible.builtin.command:
+    cmd: flux check
+  environment:
+    KUBECONFIG: "{{ flux_kubeconfig }}"
+  register: flux_check
+  retries: 6
+  delay: 10
+  until: flux_check.rc == 0
+  changed_when: false

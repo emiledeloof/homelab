@@ -34,6 +34,7 @@
   become: true
   roles: 
     - kubernetes-ctl
+    - fluxcd
 
 - name: Deploy Kubernetes nodes
   hosts: kube-nodes
