@@ -1,5 +1,5 @@
-flux_github_user: "{{ vault_github_username }}"
-flux_github_token: "{{ vault_github_token }}"
+flux_github_user: "{{ github_username }}"
+flux_github_token: "{{ github_token }}"
 flux_github_repo: "homelab"
 flux_target_branch: "main"
 flux_cluster_path: "./kubernetes/homelab"
