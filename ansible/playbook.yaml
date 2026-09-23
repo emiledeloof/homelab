@@ -1,9 +1,6 @@
 - name: Tasks to run before all else
-  hosts:
-    - dns
-    - tailscale
-    - kube-ctl
-    - kube-nodes
+  hosts: all 
+  become: true
   tasks:
     - name: Wait for apt locks to clear and update cache
       ansible.builtin.apt:
@@ -39,7 +36,7 @@
     - kubernetes-ctl
 
 - name: Deploy Kubernetes nodes
-  hosts: kube-hosts
+  hosts: kube-nodes
   become: true
   roles:
     - kubernetes-nodes
