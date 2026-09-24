@@ -29,6 +29,7 @@
       --branch={{ flux_target_branch }}
       --path={{ flux_cluster_path }}
       --kubeconfig="/etc/rancher/k3s/k3s.yaml"
+      --personal
   environment:
     GITHUB_TOKEN: "{{ flux_github_token }}"
     KUBECONFIG: "{{ flux_kubeconfig }}"
