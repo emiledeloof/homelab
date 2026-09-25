@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: demo-web-html
+  namespace: default
+data:
+  index.html: |
+    <!DOCTYPE html>
+    <html>
+      <head><title>K3s + Flux</title></head>
+      <body style="font-family: sans-serif; text-align: center; margin-top: 50px;">
+        <h1>🚀 Flux CD + K3s is working!</h1>
+        <p>Managed 100% declaratively via GitOps.</p>
+      </body>
+    </html>
