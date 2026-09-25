@@ -9,7 +9,10 @@ resource "proxmox_virtual_environment_vm" "vm" {
   }
 
   cpu { cores = var.cores }
-  memory { dedicated = var.memory }
+  memory { 
+    dedicated = var.memory
+    floating = var.memory / 2
+  }
 
   disk {
     datastore_id = "vms"
