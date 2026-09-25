@@ -35,7 +35,7 @@
     KUBECONFIG: "{{ flux_kubeconfig }}"
   register: flux_bootstrap_result
   changed_when: "'all components are up to date' not in flux_bootstrap_result.stdout"
-  no_log: true
+  # no_log: true
 
 - name: Wait for Flux system pods to be ready
   ansible.builtin.command:
