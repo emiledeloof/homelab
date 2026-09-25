@@ -20,6 +20,13 @@
     delay: 5
     timeout: 60
 
+- name: Check if Flux CD is already installed
+  ansible.builtin.command:
+    cmd: kubectl get deployment source-controller -n flux-system --kubeconfig /etc/rancher/k3s/k3s.yaml
+  register: flux_check
+  failed_when: false
+  changed_when: false
+
 - name: Bootstrap Flux CD with GitHub repository
   ansible.builtin.command:
     cmd: >
@@ -33,9 +40,8 @@
   environment:
     GITHUB_TOKEN: "{{ flux_github_token }}"
     KUBECONFIG: "{{ flux_kubeconfig }}"
-  register: flux_bootstrap_result
-  changed_when: "'all components are up to date' not in flux_bootstrap_result.stdout"
-  # no_log: true
+  when: flux_check.rc != 0
+  no_log: true
 
 - name: Wait for Flux system pods to be ready
   ansible.builtin.command:
