@@ -52,6 +52,35 @@
                 - "192.168.1.104:9100"
                 - "192.168.1.105:9100"
 
+- name: Install Grafana on RPI-5
+  hosts:
+    - monitoring
+  become: true
+  roles: 
+    - role: grafana.grafana.grafana
+      vars:
+        grafana_security:
+          admin_user: admin
+          admin_password: {{ grafana_password }}
+        
+        grafana_server:
+          http_port: 80
+          domain: "grafana.homelab.local"
+
+        grafana_datasources:
+          - name: "Prometheus"
+            type: "prometheus"
+            access: "proxy"
+            url: "http://localhost:9090"
+            isDefault: true
+            jsonData:
+              timeInterval: "15s"
+
+        grafana_dashboards:
+          - name: "Homelab monitoring"
+            grafana_dashboard_id: 1860
+            revision: 37
+            datasource: "Prometheus"
 
 - name: Deploy Kubernetes Control plane
   hosts: kube-ctl

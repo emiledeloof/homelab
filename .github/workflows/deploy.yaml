@@ -47,6 +47,7 @@ jobs:
           cd ~/homelab/ansible
           ansible-galaxy collection install artis3n.tailscale
           ansible-galaxy collection install prometheus.prometheus
+          ansible-galaxy collection install grafana.grafana
 
       - name: Run Ansible Playbook
         run: |
