@@ -42,10 +42,11 @@ jobs:
     needs: tofu
 
     steps:
-      - name: install tailscale role
+      - name: Install required collections
         run: |
           cd ~/homelab/ansible
           ansible-galaxy collection install artis3n.tailscale
+          ansible-galaxy collection install prometheus.prometheus
 
       - name: Run Ansible Playbook
         run: |

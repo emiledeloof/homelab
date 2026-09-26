@@ -29,6 +29,12 @@
         # Ensure --ssh is removed from extra arguments
         tailscale_args: ""
 
+- name: Install Node-exporter
+  hosts: all
+  become: true
+  roles: 
+    - role: prometheus.prometheus.node_exporter
+
 - name: Deploy Kubernetes Control plane
   hosts: kube-ctl
   become: true
