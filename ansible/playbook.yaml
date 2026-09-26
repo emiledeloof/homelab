@@ -59,6 +59,7 @@
   roles: 
     - role: grafana.grafana.grafana
       vars:
+        grafana_cap_net_bind_service: true
         grafana_ini:
           security:
             admin_user: admin
