@@ -35,6 +35,23 @@
   roles: 
     - role: prometheus.prometheus.node_exporter
 
+- name: Install Prometheus on RPI-5
+  hosts: 
+    - monitoring
+  become: true
+  roles:
+    - role: prometheus.prometheus.prometheus
+      vars:
+        prometheus_targets: 
+          node:
+            - targets:
+                - "192.168.1.101:9100"
+                - "192.168.1.102:9100"
+                - "192.168.1.103:9100"
+                - "192.168.1.104:9100"
+                - "192.168.1.105:9100"
+
+
 - name: Deploy Kubernetes Control plane
   hosts: kube-ctl
   become: true
