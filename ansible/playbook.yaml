@@ -11,18 +11,6 @@
       delay: 30
       retries: 20
 
-- name: Deploy and Configure Grafana
-  hosts: monitoring
-  become: true
-  pre_tasks:
-    - name: Install required Python libraries for apt modules
-      ansible.builtin.apt:
-        name:
-          - python3-debian
-          - python3-apt
-        state: present
-        update_cache: true
-
 - name: Deploy DNS server
   hosts: dns
   become: true
@@ -68,6 +56,14 @@
   hosts:
     - monitoring
   become: true
+  pre_tasks:
+    - name: Install required Python libraries for apt modules
+      ansible.builtin.apt:
+        name:
+          - python3-debian
+          - python3-apt
+        state: present
+        update_cache: true
   roles: 
     - role: grafana.grafana.grafana
       vars:
@@ -91,8 +87,7 @@
 
         grafana_dashboards:
           - name: "Homelab monitoring"
-            grafana_dashboard_id: 1860
-            revision: 37
+            dashboard_id: 1860
             datasource: "Prometheus"
 
 - name: Deploy Kubernetes Control plane
