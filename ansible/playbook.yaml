@@ -11,6 +11,18 @@
       delay: 30
       retries: 20
 
+- name: Deploy and Configure Grafana
+  hosts: monitoring
+  become: true
+  pre_tasks:
+    - name: Install required Python libraries for apt modules
+      ansible.builtin.apt:
+        name:
+          - python3-debian
+          - python3-apt
+        state: present
+        update_cache: true
+
 - name: Deploy DNS server
   hosts: dns
   become: true
