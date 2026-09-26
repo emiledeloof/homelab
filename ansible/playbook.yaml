@@ -59,13 +59,13 @@
   roles: 
     - role: grafana.grafana.grafana
       vars:
-        grafana_security:
-          admin_user: admin
-          admin_password: "{{ grafana_password }}"
-        
-        grafana_server:
-          http_port: 80
-          domain: "grafana.homelab.local"
+        grafana_ini:
+          security:
+            admin_user: admin
+            admin_password: "{{ grafana_password }}"
+          server:
+            http_port: 80
+            domain: "grafana.homelab.local"
 
         grafana_datasources:
           - name: "Prometheus"
