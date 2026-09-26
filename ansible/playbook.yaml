@@ -61,7 +61,7 @@
       vars:
         grafana_security:
           admin_user: admin
-          admin_password: {{ grafana_password }}
+          admin_password: "{{ grafana_password }}"
         
         grafana_server:
           http_port: 80
