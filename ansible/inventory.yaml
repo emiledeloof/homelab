@@ -25,3 +25,8 @@ monitoring:
   hosts:
     rpi-5: 
       ansible_host: "192.168.1.99"
+
+reverse-proxy:
+  hosts:
+    caddy:
+      ansible_host: "192.168.1.106"

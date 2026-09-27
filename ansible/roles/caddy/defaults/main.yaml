@@ -1,0 +1,8 @@
+caddy_email: "admin@homelab.local"
+caddy_sites:
+  - domain: "homelab.local"
+    upstream: "192.168.1.103:80"
+  - domain: "prometheus.homelab.local"
+    upstream: "192.168.1.99:9090"
+  - domain: "grafana.homelab.local"
+    upstream: "192.168.1.99:80"

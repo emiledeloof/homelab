@@ -90,6 +90,12 @@
             dashboard_id: 1860
             datasource: "Prometheus"
 
+- name: Deploy Caddy
+  hosts: reverse-proxy
+  become: true
+  roles: 
+    - caddy
+
 - name: Deploy Kubernetes Control plane
   hosts: kube-ctl
   become: true
