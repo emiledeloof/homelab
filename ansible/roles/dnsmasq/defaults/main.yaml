@@ -14,9 +14,10 @@ dnsmasq_expand_hosts: true
 
 # Static A/AAAA and CNAME overrides
 dnsmasq_records:
-  - { name: "homelab.local", ip: "192.168.1.103" }
-  - { name: "grafana.homelab.local", ip: "192.168.1.99" }
-  - { name: "prometheus.homelab.local", ip: "192.168.1.99" }
+  - { name: "homelab.local", ip: "192.168.1.106" }
+  - { name: "grafana.homelab.local", ip: "192.168.1.106" }
+  - { name: "prometheus.homelab.local", ip: "192.168.1.106" }
+  - { name: "pve.homelab.local", ip: "192.168.1.106"}
 
 dnsmasq_cnames:
   - { alias: "web.homelab.local", target: "homelab.local" }

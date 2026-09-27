@@ -51,6 +51,7 @@
                 - "192.168.1.103:9100"
                 - "192.168.1.104:9100"
                 - "192.168.1.105:9100"
+                - "192.168.1.106:9100"
 
 - name: Install Grafana on RPI-5
   hosts:
@@ -80,7 +81,7 @@
           - name: "Prometheus"
             type: "prometheus"
             access: "proxy"
-            url: "http://localhost:9090"
+            url: "https://prometheus.homelab.local"
             isDefault: true
             jsonData:
               timeInterval: "15s"

@@ -6,3 +6,5 @@ caddy_sites:
     upstream: "192.168.1.99:9090"
   - domain: "grafana.homelab.local"
     upstream: "192.168.1.99:80"
+  - domain: "pve.homelab.local"
+    upstream: "192.168.1.100:8006" 
