@@ -37,7 +37,7 @@
     group: caddy
     mode: "0644"
     # Validates config syntax before replacing the active file
-    validate: "caddy validate --config %s"
+    validate: "validate: caddy validate --adapter caddyfile --config %s"
   notify: Reload Caddy
 
 - name: Ensure Caddy service is enabled and started
