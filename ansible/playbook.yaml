@@ -85,6 +85,7 @@
             isDefault: true
             jsonData:
               timeInterval: "15s"
+              tlsSkipVerify: true
 
         grafana_dashboards:
           - name: "Homelab monitoring"
