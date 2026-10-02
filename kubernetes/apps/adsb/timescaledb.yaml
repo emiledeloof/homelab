@@ -1,0 +1,102 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: timescaledb-secret
+  namespace: streaming
+type: Opaque
+stringData:
+  POSTGRES_USER: "postgres"
+  POSTGRES_PASSWORD: "telemetrypassword123"
+  POSTGRES_DB: "telemetry"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: timescaledb-init-sql
+  namespace: streaming
+data:
+  01-init.sql: |
+    CREATE EXTENSION IF NOT EXISTS timescaledb;
+
+    CREATE TABLE IF NOT EXISTS aircraft_positions (
+        time            TIMESTAMPTZ       NOT NULL,
+        icao            VARCHAR(10)       NOT NULL,
+        callsign        VARCHAR(16),
+        altitude        INTEGER,
+        ground_speed    REAL,
+        track           REAL,
+        vertical_rate   INTEGER,
+        latitude        DOUBLE PRECISION  NOT NULL,
+        longitude       DOUBLE PRECISION  NOT NULL,
+        squawk          VARCHAR(8)
+    );
+
+    -- Turn table into a TimescaleDB hypertable partitioned by time
+    SELECT create_hypertable('aircraft_positions', 'time', if_not_exists => TRUE, chunk_time_interval => INTERVAL '1 day');
+
+    -- Create spatial and lookup indexes
+    CREATE INDEX IF NOT EXISTS idx_positions_icao_time ON aircraft_positions (icao, time DESC);
+    CREATE INDEX IF NOT EXISTS idx_positions_lat_lon ON aircraft_positions (latitude, longitude);
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: timescaledb
+  namespace: streaming
+spec:
+  ports:
+  - port: 5432
+    name: postgres
+  selector:
+    app: timescaledb
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: timescaledb
+  namespace: streaming
+spec:
+  serviceName: timescaledb
+  replicas: 1
+  selector:
+    matchLabels:
+      app: timescaledb
+  template:
+    metadata:
+      labels:
+        app: timescaledb
+    spec:
+      containers:
+      - name: timescaledb
+        image: timescale/timescaledb:latest-pg16
+        ports:
+        - containerPort: 5432
+          name: postgres
+        envFrom:
+        - secretRef:
+            name: timescaledb-secret
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          limits:
+            cpu: 500m
+            memory: 1Gi
+        volumeMounts:
+        - name: timescale-data
+          mountPath: /var/lib/postgresql/data
+        - name: init-sql
+          mountPath: /docker-entrypoint-initdb.d
+      volumes:
+      - name: init-sql
+        configMap:
+          name: timescaledb-init-sql
+  volumeClaimTemplates:
+  - metadata:
+      name: timescale-data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: "local-path"
+      resources:
+        requests:
+          storage: 20Gi

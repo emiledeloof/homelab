@@ -1,0 +1,85 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: vector-consumer-config
+  namespace: streaming
+data:
+  vector.yaml: |
+    sources:
+      redpanda_in:
+        type: kafka
+        bootstrap_servers: "redpanda.streaming.svc.cluster.local:9092"
+        group_id: "timescaledb-sink-group"
+        topics:
+          - "adsb-telemetry"
+        decoding:
+          codec: json
+
+    transforms:
+      filter_and_format:
+        type: remap
+        inputs:
+          - redpanda_in
+        source: |
+          if .msg_type != 3 || is_null(.latitude) || is_null(.longitude) {
+            abort
+          }
+
+          .time = format_timestamp!(to_timestamp!(.generated_at), "%Y-%m-%dT%H:%M:%SZ")
+          .icao = to_string!(.icao)
+          .latitude = to_float!(.latitude)
+          .longitude = to_float!(.longitude)
+          .altitude = to_int(.altitude) ?? null
+          .ground_speed = to_float(.ground_speed) ?? null
+          .track = to_float(.track) ?? null
+          .vertical_rate = to_int(.vertical_rate) ?? null
+          .callsign = to_string(.callsign) ?? null
+          .squawk = to_string(.squawk) ?? null
+
+    sinks:
+      timescale_out:
+        type: postgresql
+        inputs:
+          - filter_and_format
+        endpoint: "postgres://postgres:telemetrypassword123@timescaledb.streaming.svc.cluster.local:5432/telemetry"
+        table: "aircraft_positions"
+        batch:
+          max_events: 500
+          timeout_secs: 2
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vector-redpanda-consumer
+  namespace: streaming
+  labels:
+    app: vector-consumer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vector-consumer
+  template:
+    metadata:
+      labels:
+        app: vector-consumer
+    spec:
+      containers:
+      - name: vector
+        image: timberio/vector:0.38.0-distroless-libc
+        args: ["--config", "/etc/vector/vector.yaml"]
+        resources:
+          requests:
+            cpu: 50m
+            memory: 64Mi
+          limits:
+            cpu: 200m
+            memory: 128Mi
+        volumeMounts:
+        - name: config
+          mountPath: /etc/vector
+          readOnly: true
+      volumes:
+      - name: config
+        configMap:
+          name: vector-consumer-config

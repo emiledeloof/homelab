@@ -69,15 +69,20 @@ data:
         encoding:
           codec: json
 
-      # Sink 2: Uncomment once Redpanda/Kafka is running
-      # redpanda_sink:
-      #   type: kafka
-      #   inputs:
-      #     - parse_sbs
-      #   bootstrap_servers: "redpanda.streaming.svc.cluster.local:9092"
-      #   topic: "adsb.raw"
-      #   encoding:
-      #     codec: json
+      # Redpanda / Kafka Sink
+      redpanda_sink:
+        type: kafka
+        inputs:
+          - parse_sbs
+        bootstrap_servers: "redpanda.streaming.svc.cluster.local:9092"
+        topic: "adsb-telemetry"
+        # Key messages by aircraft ICAO so records for the same plane land on the same partition
+        key_field: "icao"
+        encoding:
+          codec: json
+        acknowledgements:
+          # In homelab single-broker mode, ack from leader is sufficient
+          acks: 1
 ---
 apiVersion: apps/v1
 kind: Deployment
