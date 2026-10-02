@@ -24,10 +24,8 @@ data:
         inputs:
           - readsb_sbs
         source: |
-          # Split CSV fields
           fields = split(string!(.message), ",")
           
-          # Ensure it is a valid MSG line with expected minimum fields
           if length(fields) >= 11 && fields[0] == "MSG" {
             .msg_type = to_int(fields[1]) ?? 0
             .icao = fields[4]
@@ -35,18 +33,18 @@ data:
             
             # Type 1: Call sign identification
             if .msg_type == 1 && length(fields) >= 11 {
-              .callsign = strip_whitespace(fields[10])
+              .callsign = strip_whitespace(string!(fields[10]))
             }
             
             # Type 3: Airborne Position (lat, lon, altitude)
-            if .msg_type == 3 && length(fields) >= 17 {
+            if .msg_type == 3 && length(fields) >= 16 {
               .altitude = to_int(fields[11]) ?? null
               .latitude = to_float(fields[14]) ?? null
               .longitude = to_float(fields[15]) ?? null
             }
             
             # Type 4: Airborne Velocity (speed, heading, vertical rate)
-            if .msg_type == 4 && length(fields) >= 18 {
+            if .msg_type == 4 && length(fields) >= 17 {
               .ground_speed = to_float(fields[12]) ?? null
               .track = to_float(fields[13]) ?? null
               .vertical_rate = to_int(fields[16]) ?? null
@@ -54,13 +52,12 @@ data:
             
             # Type 6: Squawk
             if .msg_type == 6 && length(fields) >= 18 {
-              .squawk = strip_whitespace(fields[17])
+              .squawk = strip_whitespace(string!(fields[17]))
             }
           } else {
             abort
           }
           
-          # Clean up original unparsed string
           del(.message)
 
     sinks:
