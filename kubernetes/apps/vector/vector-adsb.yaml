@@ -102,8 +102,15 @@ spec:
         args:
           - "-d"
           - "-d"
-          - "TCP-LISTEN:30003,fork,reuseaddr"
-          - "TCP:192.168.1.98:30003,retry=10,interval=2"
+          - "TCP:192.168.1.98:30003,retry=999,interval=2"
+          - "TCP:127.0.0.1:30003,retry=999,interval=2"
+        resources:
+          requests:
+            cpu: 10m
+            memory: 16Mi
+          limits:
+            cpu: 50m
+            memory: 32Mi
       - name: vector
         image: timberio/vector:0.38.0-distroless-libc
         args: ["--config", "/etc/vector/vector.yaml"]
