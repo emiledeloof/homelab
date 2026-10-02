@@ -1,0 +1,119 @@
+kind: Namespace
+metadata:
+  name: streaming
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: vector-config
+  namespace: streaming
+data:
+  vector.yaml: |
+    sources:
+      readsb_sbs:
+        type: socket
+        mode: tcp
+        address: "192.168.1.98:30003"
+        decoding:
+          codec: bytes
+
+    transforms:
+      parse_sbs:
+        type: remap
+        inputs:
+          - readsb_sbs
+        source: |
+          # Split CSV fields
+          fields = split(string!(.message), ",")
+          
+          # Ensure it is a valid MSG line with expected minimum fields
+          if length(fields) >= 11 && fields[0] == "MSG" {
+            .msg_type = to_int(fields[1]) ?? 0
+            .icao = fields[4]
+            .generated_at = now()
+            
+            # Type 1: Call sign identification
+            if .msg_type == 1 && length(fields) >= 11 {
+              .callsign = strip_whitespace(fields[10])
+            }
+            
+            # Type 3: Airborne Position (lat, lon, altitude)
+            if .msg_type == 3 && length(fields) >= 17 {
+              .altitude = to_int(fields[11]) ?? null
+              .latitude = to_float(fields[14]) ?? null
+              .longitude = to_float(fields[15]) ?? null
+            }
+            
+            # Type 4: Airborne Velocity (speed, heading, vertical rate)
+            if .msg_type == 4 && length(fields) >= 18 {
+              .ground_speed = to_float(fields[12]) ?? null
+              .track = to_float(fields[13]) ?? null
+              .vertical_rate = to_int(fields[16]) ?? null
+            }
+            
+            # Type 6: Squawk
+            if .msg_type == 6 && length(fields) >= 18 {
+              .squawk = strip_whitespace(fields[17])
+            }
+          } else {
+            abort
+          }
+          
+          # Clean up original unparsed string
+          del(.message)
+
+    sinks:
+      # Sink 1: Stdout for testing/debugging
+      console_sink:
+        type: console
+        inputs:
+          - parse_sbs
+        encoding:
+          codec: json
+
+      # Sink 2: Uncomment once Redpanda/Kafka is running
+      # redpanda_sink:
+      #   type: kafka
+      #   inputs:
+      #     - parse_sbs
+      #   bootstrap_servers: "redpanda.streaming.svc.cluster.local:9092"
+      #   topic: "adsb.raw"
+      #   encoding:
+      #     codec: json
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vector-adsb-ingest
+  namespace: streaming
+  labels:
+    app: vector-adsb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vector-adsb
+  template:
+    metadata:
+      labels:
+        app: vector-adsb
+    spec:
+      containers:
+      - name: vector
+        image: timberio/vector:0.38.0-distroless-libc
+        args: ["--config", "/etc/vector/vector.yaml"]
+        resources:
+          requests:
+            cpu: 50m
+            memory: 64Mi
+          limits:
+            cpu: 250m
+            memory: 128Mi
+        volumeMounts:
+        - name: config
+          mountPath: /etc/vector
+          readOnly: true
+      volumes:
+      - name: config
+        configMap:
+          name: vector-config
