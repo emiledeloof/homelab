@@ -14,7 +14,7 @@ data:
       readsb_sbs:
         type: socket
         mode: tcp
-        address: "192.168.1.98:30003"
+        address: "127.0.0.1:30003"
         decoding:
           codec: bytes
 
@@ -97,6 +97,13 @@ spec:
         app: vector-adsb
     spec:
       containers:
+      - name: tcp-proxy
+        image: alpine/socat:latest
+        args:
+          - "-d"
+          - "-d"
+          - "TCP-LISTEN:30003,fork,reuseaddr"
+          - "TCP:192.168.1.98:30003,retry=10,interval=2"
       - name: vector
         image: timberio/vector:0.38.0-distroless-libc
         args: ["--config", "/etc/vector/vector.yaml"]
