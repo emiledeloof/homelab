@@ -16,26 +16,21 @@ jobs:
 
     steps:
       - name: Sync latest repository code
-        run: |
-          cd ~/homelab
-          git pull origin-ssh main
+        uses: actions/checkout@v4
 
       - name: Tofu Init
         run: |
-          cd ~/homelab/terraform
-          tofu init \
-            -backend-config="access_key=$AWS_ACCESS_KEY_ID" \
-            -backend-config="secret_key=$AWS_SECRET_ACCESS_KEY"
+          tofu -chdir=terraform init \
+          -backend-config="access_key=$AWS_ACCESS_KEY_ID" \
+          -backend-config="secret_key=$AWS_SECRET_ACCESS_KEY"
 
       - name: Tofu Plan
         run: |
-          cd ~/homelab/terraform
-          tofu plan -no-color
+          tofu -chdir=terraform plan -no-color
 
       - name: Tofu Apply
         run: |
-          cd ~/homelab/terraform
-          tofu apply -auto-approve -no-color
+          tofu -chdir=terraform apply -auto-approve -no-color
 
   deploy:
     runs-on: self-hosted
@@ -44,15 +39,13 @@ jobs:
     steps:
       - name: Install required collections
         run: |
-          cd ~/homelab/ansible
-          ansible-galaxy collection install artis3n.tailscale
-          ansible-galaxy collection install prometheus.prometheus
-          ansible-galaxy collection install grafana.grafana
+          ~/.local/bin/ansible-galaxy collection install artis3n.tailscale
+          ~/.local/bin/ansible-galaxy collection install prometheus.prometheus
+          ~/.local/bin/ansible-galaxy collection install grafana.grafana
 
       - name: Run Ansible Playbook
         run: |
-          cd ~/homelab/ansible
-          /home/homelab/.local/bin/ansible-playbook \
-            -i inventory.yaml \
-            playbook.yaml \
+          ~/.local/bin/ansible-playbook \
+            -i ansible/inventory.yaml \
+            ansible/playbook.yaml \
             --vault-password-file ~/.vault_pass
