@@ -48,6 +48,7 @@ jobs:
 
       - name: Run Ansible Playbook
         run: |
+          ANSIBLE_CONFIG=ansible/ansible.cfg \
           ~/.local/bin/ansible-playbook \
             -i ansible/inventory.yaml \
             ansible/playbook.yaml \
