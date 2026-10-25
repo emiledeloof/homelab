@@ -14,7 +14,7 @@ data:
       readsb_sbs:
         type: socket
         mode: tcp
-        address: "127.0.0.1:30003"
+        address: "192.168.1.98:30003"
         decoding:
           codec: bytes
 
