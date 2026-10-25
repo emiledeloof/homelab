@@ -70,8 +70,6 @@ resource "proxmox_virtual_environment_file" "cloud_init_user_data" {
         - systemctl daemon-reload
         - systemctl enable --now qemu-guest-agent
         - systemctl restart qemu-guest-agent
-        - systemctl enable --now ${ssh_service_name}
-        - systemctl restart ${ssh_service_name}
     EOF
 
     file_name = "user-data-${var.name}.yaml"
