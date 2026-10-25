@@ -5,10 +5,12 @@ resource "proxmox_virtual_environment_vm" "vm" {
 
   agent {
     enabled = true
+    timeout = "1m"
   }
 
   cpu { 
     cores = var.cores 
+    type  = "x86-64-v2-AES"
   }
   memory { 
     dedicated = var.memory
@@ -22,8 +24,17 @@ resource "proxmox_virtual_environment_vm" "vm" {
     import_from  = proxmox_download_file.debian_cloud_img.id
   }
 
+  network_device {
+    bridge = "vmbr0"
+    model  = "virtio"
+  }
+
   initialization {
     user_data_file_id = proxmox_virtual_environment_file.cloud_init_user_data.id
+    datastore_id = "vms"
+
+    dns {
+      servers = ["192.168.1.101", "1.1.1.1", "8.8.8.8"]
 
     ip_config {
       ipv4 {
