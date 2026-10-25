@@ -1,21 +1,54 @@
-- name: Tasks to run before all else
-  hosts: all 
+- name: Wait for Cloud-Init and update apt cache
+  hosts: all
   become: true
+  gather_facts: false
   tasks:
-    - name: Wait for apt locks to clear and update cache
+    - name: Wait for SSH connection
+      ansible.builtin.wait_for_connection:
+        timeout: 180
+
+    - name: Wait for cloud-init to finish
+      ansible.builtin.command: cloud-init status --wait
+      changed_when: false
+
+    - name: Gather facts
+      ansible.builtin.setup:
+
+    - name: Update apt cache cleanly using public DNS
       ansible.builtin.apt:
-        update_cache: yes
+        update_cache: true
         cache_valid_time: 3600
-      register: apt_status
-      until: apt_status is success
-      delay: 30
-      retries: 20
+        lock_timeout: 180
 
 - name: Deploy DNS server
   hosts: dns
   become: true
   roles:
     - dnsmasq
+
+- name: Point all VMs to local DNS server
+  hosts: all
+  become: true
+  tasks:
+    - name: Configure Netplan to use local DNS server (Debian 13 Cloud-Init default)
+      ansible.builtin.copy:
+        dest: /etc/netplan/99-custom-dns.yaml
+        mode: "0600"
+        content: |
+          network:
+            version: 2
+            ethernets:
+              ens18:
+                nameservers:
+                  search: [homelab.local]
+                  addresses:
+                    - 192.168.1.101
+                    - 1.1.1.1
+      notify: Apply netplan
+
+  handlers:
+    - name: Apply netplan
+      ansible.builtin.command: netplan apply
 
 - name: Deploy Tailscale
   hosts: tailscale

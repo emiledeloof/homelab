@@ -45,7 +45,7 @@ resource "proxmox_virtual_environment_vm" "vm" {
     datastore_id      = "vms"
 
     dns {
-      servers = ["192.168.1.101", "1.1.1.1", "8.8.8.8"]
+      servers = ["1.1.1.1", "8.8.8.8"]
     }
 
     ip_config {
