@@ -31,7 +31,12 @@
     - dnsmasq
 
 - name: Point all VMs to local DNS server
-  hosts: all
+  hosts: 
+    - kubernetes
+    - dns
+    - tailscale
+    - reverse-proxy
+
   become: true
   tasks:
     - name: Configure Netplan to use local DNS server (Debian 13 Cloud-Init default)
