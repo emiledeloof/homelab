@@ -3,12 +3,15 @@ resource "proxmox_virtual_environment_vm" "vm" {
   node_name = "pve"
   vm_id     = var.vm_id
 
-  clone {
-    vm_id = 9000
-    full  = true
+  agent {
+    enabled = true
+    timeout = 1m
   }
 
-  cpu { cores = var.cores }
+  cpu { 
+    cores = var.cores 
+    type  = "x86-64-v2-AES"
+  }
   memory { 
     dedicated = var.memory
     floating = var.memory / 2
@@ -18,6 +21,7 @@ resource "proxmox_virtual_environment_vm" "vm" {
     datastore_id = "vms"
     interface    = "scsi0"
     size         = var.disk_size
+    import_from  = proxmox_virtual_environment_download_file.debian_cloud_img.id
   }
 
   initialization {
@@ -34,8 +38,6 @@ resource "proxmox_virtual_environment_vm" "vm" {
       keys     = [var.ssh_key]
     }
   }
-
-  agent { enabled = true }
 }
 
 resource "proxmox_virtual_environment_file" "cloud_init_user_data" {
