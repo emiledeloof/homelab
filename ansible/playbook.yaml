@@ -1,5 +1,9 @@
 - name: Wait for Cloud-Init and update apt cache
-  hosts: all
+  hosts: 
+    - kubernetes
+    - dns
+    - tailscale
+    - reverse-proxy
   become: true
   gather_facts: false
   tasks:
