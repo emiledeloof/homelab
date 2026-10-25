@@ -54,6 +54,8 @@ resource "proxmox_virtual_environment_file" "cloud_init_user_data" {
         - python3
         - python3-pip
         - python3-venv
+        - net-tools
+        - qemu-guest-agent
       users:
         - default
         - name: ${var.username}
@@ -63,6 +65,13 @@ resource "proxmox_virtual_environment_file" "cloud_init_user_data" {
           sudo: ALL=(ALL) NOPASSWD:ALL
           ssh_authorized_keys:
             - ${var.ssh_key}
+
+      runcmd:
+        - systemctl daemon-reload
+        - systemctl enable --now qemu-guest-agent
+        - systemctl restart qemu-guest-agent
+        - systemctl enable --now ${ssh_service_name}
+        - systemctl restart ${ssh_service_name}
     EOF
 
     file_name = "user-data-${var.name}.yaml"
