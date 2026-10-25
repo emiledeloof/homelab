@@ -35,6 +35,7 @@ resource "proxmox_virtual_environment_vm" "vm" {
 
     dns {
       servers = ["192.168.1.101", "1.1.1.1", "8.8.8.8"]
+    }
 
     ip_config {
       ipv4 {
