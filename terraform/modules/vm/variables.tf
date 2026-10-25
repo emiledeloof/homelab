@@ -39,3 +39,7 @@ variable "username" {
   type    = string
   default = "homelab" # Fallback if not specified
 }
+
+variable "image_id" {
+  type = string
+}

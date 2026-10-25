@@ -8,4 +8,5 @@ module "tailscale" {
   disk_size  = 10
   ip_address = "192.168.1.103/24"
   ssh_key    = var.ssh_key
+  image_id = proxmox_download_file.debian_cloud_img.id  
 }

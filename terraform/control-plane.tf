@@ -8,4 +8,5 @@ module "control-plane" {
   disk_size  = 30
   ip_address = "192.168.1.102/24"
   ssh_key    = var.ssh_key
+  image_id = proxmox_download_file.debian_cloud_img.id
 }

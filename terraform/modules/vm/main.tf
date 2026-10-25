@@ -32,7 +32,7 @@ resource "proxmox_virtual_environment_vm" "vm" {
     iothread     = true
     discard      = "on"
     size         = var.disk_size
-    import_from  = proxmox_download_file.debian_cloud_img.id
+    import_from  = var.image_id
   }
 
   network_device {

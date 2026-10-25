@@ -8,4 +8,5 @@ module "dns_server" {
   disk_size  = 10
   ip_address = "192.168.1.101/24"
   ssh_key    = var.ssh_key
+  image_id = proxmox_download_file.debian_cloud_img.id
 }

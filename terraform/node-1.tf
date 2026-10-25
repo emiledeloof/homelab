@@ -8,4 +8,5 @@ module "node-1" {
   disk_size  = 50
   ip_address = "192.168.1.104/24"
   ssh_key    = var.ssh_key
+  image_id = proxmox_download_file.debian_cloud_img.id
 }

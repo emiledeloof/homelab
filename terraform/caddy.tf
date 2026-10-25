@@ -8,4 +8,5 @@ module "caddy" {
   disk_size  = 5
   ip_address = "192.168.1.106/24"
   ssh_key    = var.ssh_key
+  image_id = proxmox_download_file.debian_cloud_img.id
 }
