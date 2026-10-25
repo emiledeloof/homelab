@@ -18,6 +18,7 @@ dnsmasq_records:
   - { name: "grafana.homelab.local", ip: "192.168.1.106" }
   - { name: "prometheus.homelab.local", ip: "192.168.1.106" }
   - { name: "pve.homelab.local", ip: "192.168.1.106"}
+  - { name: "ha.homelab.local", ip: "192.168.1.106"}
 
 dnsmasq_cnames:
   - { alias: "web.homelab.local", target: "homelab.local" }
