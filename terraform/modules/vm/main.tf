@@ -21,7 +21,7 @@ resource "proxmox_virtual_environment_vm" "vm" {
     datastore_id = "vms"
     interface    = "scsi0"
     size         = var.disk_size
-    import_from  = proxmox_virtual_environment_download_file.debian_cloud_img.id
+    import_from  = proxmox_download_file.debian_cloud_img.id
   }
 
   initialization {
@@ -71,9 +71,9 @@ resource "proxmox_virtual_environment_file" "cloud_init_user_data" {
   }
 }
 
-resource "proxmox_virtual_environment_download_file" "debian_cloud_img" {
+resource "proxmox_download_file" "debian_cloud_img" {
   content_type = "import"
   datastore_id = "local"
-  node_name    = "pve-01"
+  node_name    = "pve"
   url          = "https://cloud.debian.org/images/cloud/trixie/latest/debian-13-generic-amd64.qcow2"
 }
