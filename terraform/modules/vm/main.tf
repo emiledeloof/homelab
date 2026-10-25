@@ -5,7 +5,7 @@ resource "proxmox_virtual_environment_vm" "vm" {
 
   agent {
     enabled = true
-    timeout = 1m
+    timeout = "1m"
   }
 
   cpu { 
