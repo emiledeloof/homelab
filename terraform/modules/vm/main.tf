@@ -5,12 +5,10 @@ resource "proxmox_virtual_environment_vm" "vm" {
 
   agent {
     enabled = true
-    timeout = "1m"
   }
 
   cpu { 
     cores = var.cores 
-    type  = "x86-64-v2-AES"
   }
   memory { 
     dedicated = var.memory
