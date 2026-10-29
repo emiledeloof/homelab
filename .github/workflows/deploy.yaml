@@ -45,6 +45,7 @@ jobs:
           ~/.local/bin/ansible-galaxy collection install artis3n.tailscale
           ~/.local/bin/ansible-galaxy collection install prometheus.prometheus
           ~/.local/bin/ansible-galaxy collection install grafana.grafana
+          ~/.local/bin/ansible-galaxy role install geerlingguy.docker
 
       - name: Run Ansible Playbook
         run: |

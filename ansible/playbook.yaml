@@ -154,3 +154,10 @@
   become: true
   roles:
     - kubernetes-nodes
+
+- name: Install Docker & provision HA
+  hosts: home-assistant
+  become: true
+  roles:
+    - geerlingguy.docker
+    - home-assistant

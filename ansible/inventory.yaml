@@ -35,3 +35,8 @@ runners:
   hosts:
     runner:
       ansible_host: "localhost"
+
+#home-assistant:
+#  hosts:
+#    ha:
+#      ansible_host: "192.168.1.107"
