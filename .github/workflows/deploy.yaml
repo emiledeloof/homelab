@@ -19,7 +19,7 @@ jobs:
 
     steps:
       - name: Sync latest repository code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Tofu Init
         run: |
